@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 import './App.css'
+import TodoForm from './components/TodoForm';
+import Todolist from './components/Todolist';
 
 const App = () => {
 
@@ -9,11 +11,10 @@ const App = () => {
 
   const handleSubmit = (e) => { 
     e.preventDefault();
-
     if (editId) {
       const editTodo = todos.find((t) => t.id === editId);
       const updatedTodos = todos.map((t) => {
-        if (t.id === editId) {
+        if (t.id === editTodo.id) {
         
           return {id: t.id, todo};
         }
@@ -24,8 +25,7 @@ const App = () => {
       setTodo("");
       return;
     }
-
-    
+  
     if (todo !== "") {
       setTodos([{id: `${todo}-${Date.now()}`, todo},...todos]);
       setTodo("");
@@ -33,15 +33,16 @@ const App = () => {
     }
   };
 
+
   const handleDelete = (id) => {
     setTodos(todos.filter((t) => t.id !== id));
   };
+
 
   const handleEdit = (id) => {
     const editTodo = todos.find((t) => t.id === id);
     setTodo(editTodo.todo);
     setEditId(id);
-
   };
 
 
@@ -51,32 +52,21 @@ const App = () => {
       <div className='container'>
         <h1>To-Do List App</h1>
 
+        <TodoForm 
+          handleSubmit={handleSubmit} 
+          todo = {todo} 
+          setTodo={setTodo} 
+          editId={editId}
+        />
 
-         <form className='todoForm' onSubmit={handleSubmit}>
-          <input type = 'text' 
-                 value={todo} 
-                 onChange={(e)=> setTodo(e.target.value)}/>
-          <button type="submit">{editId? "Edit" : "Go"}</button>
-         </form>
-
-
-
-         <ul className="todolist">
-          {todos.map((t) => (
-            <li className='singletodo'>
-              <span className="todotext" key={t.id}>{t.todo}</span>
-              <button onClick={() => handleEdit(t.id)} >Edit</button>
-              
-              <button onClick={() => handleDelete(t.id)}>Delete</button>
-            </li>
-        ))}  
-            
-        </ul>
+        <Todolist
+          todos={todos}
+          handleEdit={handleEdit}
+          handleDelete={handleDelete}
+        />
 
 
       </div>
-
-   
     </div>  
   )
 }
